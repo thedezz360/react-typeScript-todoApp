@@ -1,12 +1,13 @@
 // function App (): JSX.Element {
-import { Todos } from './componentes/Todos'
+import { Todos } from './components/Todos'
 import { useState } from 'react'
+import { type Todo as TodoType, type TodoId} from './types'
 
 const mockTodos = [
   {
     id: '1',
     title: 'todo 1',
-    completed: false
+    completed: true
   },
   {
     id: '2',
@@ -22,10 +23,33 @@ const mockTodos = [
 
 const App: React.FC = () => {
   const [todos, setTodos] = useState(mockTodos)
+
+  const handleRemove = ({id}: TodoId) => {
+    const newTodos = todos.filter(todo => todo.id !== id)
+    setTodos(newTodos)
+  }
+
+  const handleCompleted = ({ id, completed }: Pick<TodoType, 'id' | 'completed'>) => {
+    const newTodos = todos.map(todo => {
+      if(todo.id === id){
+        return {
+          ...todo,
+          completed
+        }
+      }
+      return todo
+    })
+    setTodos(newTodos)
+  }
+
   return (
-    <>
-     <Todos todos={todos} />
-    </>
+    <div className='todoapp'>
+      <Todos 
+        todos={todos} 
+        handleRemove={handleRemove} 
+        handleCompleted={handleCompleted}
+      />
+    </div>
   )
 }
 
